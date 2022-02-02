@@ -1,6 +1,4 @@
 
-from sre_constants import IN
-from django import test
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test import TestCase
@@ -8,7 +6,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Ingredient, Tag, User
+from core.models import Ingredient
 
 from recipe.serializers import IngredientSerializer
 
