@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ParseError
 
 from core.models import Recipe, Tag, Ingredient
 from recipe import serializers
@@ -27,6 +28,19 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
 class TagViewSet(BaseRecipeAttrViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
+
+    def get_queryset(self):
+        in_use = None
+        try:
+            in_use = bool(int(self.request.query_params['in_use']))
+        except KeyError:
+            pass
+        except ValueError:
+            raise ParseError
+
+        if not in_use:
+            return super().get_queryset()
+        return self.queryset.filter(recipe__id__isnull=False).distinct()
 
 
 class IngredientViewSet(BaseRecipeAttrViewSet):
